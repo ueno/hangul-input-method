@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Hangul Input Method
+Comment=Korean Hangul Input Method
+Exec=gapplication launch org.gtk.HangulInputMethod
+DBusActivatable=true
+StartupNotify=true
+Implements=org.freedesktop.InputMethod

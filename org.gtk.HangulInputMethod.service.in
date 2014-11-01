@@ -1,0 +1,3 @@
+[D-BUS Service]
+Name=org.gtk.HangulInputMethod
+Exec=@libexecdir@/@PACKAGE_NAME@ --gapplication-service

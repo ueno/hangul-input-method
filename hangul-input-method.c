@@ -25,17 +25,17 @@
 #include <hangul.h>
 #include <xkbcommon/xkbcommon.h>
 
-#define HANGUL_TYPE_INPUT_METHOD_ENGINE (hangul_input_method_engine_get_type())
-#define HANGUL_INPUT_METHOD_ENGINE(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), HANGUL_TYPE_INPUT_METHOD_ENGINE, HangulInputMethodEngine))
-#define HANGUL_INPUT_METHOD_ENGINE_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), HANGUL_TYPE_INPUT_METHOD_ENGINE, HangulInputMethodEngineClass))
-#define HANGUL_IS_INPUT_METHOD_ENGINE(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), HANGUL_TYPE_INPUT_METHOD_ENGINE))
-#define HANGUL_IS_INPUT_METHOD_ENGINE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), HANGUL_TYPE_INPUT_METHOD_ENGINE))
-#define HANGUL_INPUT_METHOD_ENGINE_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), HANGUL_TYPE_INPUT_METHOD_ENGINE, HangulInputMethodEngineClass))
+#define G_TYPE_HANGUL_INPUT_METHOD_ENGINE (g_hangul_input_method_engine_get_type())
+#define G_HANGUL_INPUT_METHOD_ENGINE(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), G_TYPE_HANGUL_INPUT_METHOD_ENGINE, GHangulInputMethodEngine))
+#define G_HANGUL_INPUT_METHOD_ENGINE_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), G_TYPE_HANGUL_INPUT_METHOD_ENGINE, GHangulInputMethodEngineClass))
+#define G_IS_HANGUL_INPUT_METHOD_ENGINE(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), G_TYPE_HANGUL_INPUT_METHOD_ENGINE))
+#define G_IS_HANGUL_INPUT_METHOD_ENGINE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), G_TYPE_HANGUL_INPUT_METHOD_ENGINE))
+#define G_HANGUL_INPUT_METHOD_ENGINE_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), G_TYPE_HANGUL_INPUT_METHOD_ENGINE, GHangulInputMethodEngineClass))
 
-typedef struct _HangulInputMethodEngine HangulInputMethodEngine;
-typedef struct _HangulInputMethodEngineClass HangulInputMethodEngineClass;
+typedef struct _GHangulInputMethodEngine GHangulInputMethodEngine;
+typedef struct _GHangulInputMethodEngineClass GHangulInputMethodEngineClass;
 
-struct _HangulInputMethodEngine
+struct _GHangulInputMethodEngine
 {
   GInputMethodEngine parent_instance;
 
@@ -47,55 +47,55 @@ struct _HangulInputMethodEngine
   GArray *preedit;
 };
 
-struct _HangulInputMethodEngineClass
+struct _GHangulInputMethodEngineClass
 {
   GInputMethodEngineClass parent_class;
 };
 
 static gboolean
-hangul_input_method_real_key_event (GInputMethodEngine *engine,
-				    guint               keycode,
-				    gboolean            pressed);
+g_hangul_input_method_real_key_event (GInputMethodEngine *engine,
+                                      guint               keycode,
+                                      gboolean            pressed);
 
-G_DEFINE_TYPE (HangulInputMethodEngine, hangul_input_method_engine,
+G_DEFINE_TYPE (GHangulInputMethodEngine, g_hangul_input_method_engine,
 	       G_TYPE_INPUT_METHOD_ENGINE)
 
 static void
-hangul_input_method_engine_real_dispose (GObject *object)
+g_hangul_input_method_engine_real_dispose (GObject *object)
 {
-  HangulInputMethodEngine *hangul = HANGUL_INPUT_METHOD_ENGINE (object);
+  GHangulInputMethodEngine *hangul = G_HANGUL_INPUT_METHOD_ENGINE (object);
 
   g_clear_pointer (&hangul->xkb_context, xkb_context_unref);
   g_clear_pointer (&hangul->xkb_keymap, xkb_keymap_unref);
   g_clear_pointer (&hangul->xkb_state, xkb_state_unref);
   g_clear_pointer (&hangul->context, hangul_ic_delete);
 
-  G_OBJECT_CLASS (hangul_input_method_engine_parent_class)->dispose (object);
+  G_OBJECT_CLASS (g_hangul_input_method_engine_parent_class)->dispose (object);
 }
 
 static void
-hangul_input_method_engine_real_finalize (GObject *object)
+g_hangul_input_method_engine_real_finalize (GObject *object)
 {
-  HangulInputMethodEngine *hangul = HANGUL_INPUT_METHOD_ENGINE (object);
+  GHangulInputMethodEngine *hangul = G_HANGUL_INPUT_METHOD_ENGINE (object);
 
   g_array_free (hangul->preedit, TRUE);
 
-  G_OBJECT_CLASS (hangul_input_method_engine_parent_class)->finalize (object);
+  G_OBJECT_CLASS (g_hangul_input_method_engine_parent_class)->finalize (object);
 }
 
 static void
-hangul_input_method_engine_class_init (HangulInputMethodEngineClass *klass)
+g_hangul_input_method_engine_class_init (GHangulInputMethodEngineClass *klass)
 {
   GInputMethodEngineClass *engine_class = G_INPUT_METHOD_ENGINE_CLASS (klass);
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  engine_class->key_event = hangul_input_method_real_key_event;
-  object_class->dispose = hangul_input_method_engine_real_dispose;
-  object_class->finalize = hangul_input_method_engine_real_finalize;
+  engine_class->key_event = g_hangul_input_method_real_key_event;
+  object_class->dispose = g_hangul_input_method_engine_real_dispose;
+  object_class->finalize = g_hangul_input_method_engine_real_finalize;
 }
 
 static void
-hangul_input_method_engine_init (HangulInputMethodEngine *hangul)
+g_hangul_input_method_engine_init (GHangulInputMethodEngine *hangul)
 {
   const struct xkb_rule_names names =
     {
@@ -117,7 +117,7 @@ hangul_input_method_engine_init (HangulInputMethodEngine *hangul)
 }
 
 static void
-hangul_input_method_engine_update_preedit (HangulInputMethodEngine *hangul)
+g_hangul_input_method_engine_update_preedit (GHangulInputMethodEngine *hangul)
 {
   const gunichar *ucs4;
   gchar *utf8;
@@ -169,7 +169,7 @@ hangul_input_method_engine_update_preedit (HangulInputMethodEngine *hangul)
 }
 
 static void
-hangul_input_method_engine_flush (HangulInputMethodEngine *hangul)
+g_hangul_input_method_engine_flush (GHangulInputMethodEngine *hangul)
 {
   const gunichar *ucs4;
 
@@ -199,11 +199,11 @@ hangul_input_method_engine_flush (HangulInputMethodEngine *hangul)
 }
 
 static gboolean
-hangul_input_method_real_key_event (GInputMethodEngine *engine,
-				    guint               keycode,
-				    gboolean            pressed)
+g_hangul_input_method_real_key_event (GInputMethodEngine *engine,
+                                      guint               keycode,
+                                      gboolean            pressed)
 {
-  HangulInputMethodEngine *hangul = HANGUL_INPUT_METHOD_ENGINE (engine);
+  GHangulInputMethodEngine *hangul = G_HANGUL_INPUT_METHOD_ENGINE (engine);
   xkb_keysym_t keysym;
   gboolean retval;
 
@@ -264,11 +264,11 @@ hangul_input_method_real_key_event (GInputMethodEngine *engine,
         }
 
       if (!retval)
-        hangul_input_method_engine_flush (hangul);
+        g_hangul_input_method_engine_flush (hangul);
     }
 
  out:
-  hangul_input_method_engine_update_preedit (hangul);
+  g_hangul_input_method_engine_update_preedit (hangul);
   return retval;
 }
 
@@ -277,7 +277,7 @@ create_engine (GInputMethod *inputmethod,
                const gchar  *client_id,
                gpointer      user_data)
 {
-  return g_object_new (HANGUL_TYPE_INPUT_METHOD_ENGINE,
+  return g_object_new (G_TYPE_HANGUL_INPUT_METHOD_ENGINE,
 		       "client-id", client_id, NULL);
 }
 
